@@ -4,13 +4,13 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xsd">
 
 	<general>
-		<version date="2024-08-02">1.2</version>
+		<version date="2024-08-03">1.0</version>
 		<verstxt> mit config.xml-Datei</verstxt>
-		<title>Starter BK</title>
-		<text>Meld-Vergleich auswählen (v$version;$verstxt)</text>
+		<title>Office Vorlagen Starter</title>
+		<text>Vorlage auswählen :(v$version;$verstxt)</text>
 		<config>Einstellungen</config>
 		<confProg>geany</confProg>
-		<meld>Meld-Programm</meld>
+		<meld>??-Programm</meld>
 	</general>
 	<directories>
 		<homeVerz>/home/stefan</homeVerz>
