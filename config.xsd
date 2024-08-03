@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+elementFormDefault="qualified">
+	
+  <xs:element name="bk-script_options">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="general"/>
+        <xs:element ref="directories"/>
+        <xs:element ref="vergleiche"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="general">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="version"/>
+        <xs:element name="verstxt" type="xs:string"/>
+        <xs:element name="title" type="xs:string"/>
+        <xs:element name="text" type="xs:string"/>
+        <xs:element name="config" type="xs:string"/>
+        <xs:element name="confProg" type="xs:string"/>
+        <xs:element name="meld" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="version">
+    <xs:complexType mixed="true">
+      <xs:attribute name="date" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="directories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="homeVerz" type="xs:string"/>
+        <xs:element name="stickort" type="xs:string"/>
+        <xs:element name="StdVerz" type="xs:string"/>
+        <xs:element name="RemoteOrt" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="vergleiche">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ordpaar" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="ordpaar">
+    <xs:complexType>
+      <xs:sequence>
+		<xs:element name="id"   type="xs:string"/>  
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="dir1" type="xs:string"/>
+        <xs:element name="dir2" type="xs:string"/>
+      </xs:sequence>     
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
