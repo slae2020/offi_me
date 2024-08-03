@@ -1,6 +1,6 @@
 ## office starter.sh
 
-> Script zum vereinfachten Staren von *office* mit Vorlagen.
+> Script zum vereinfachten Staren von *office* mit verschiedenen Vorlagen.
 
 > Nutzt *libreoffice* und *zenity*
 
