@@ -1,8 +1,8 @@
 ## office starter.sh
 
-> Script zum vereinfachten Staren von *office* fuers backup.
+> Script zum vereinfachten Staren von *office* mit Vorlagen.
 
-> Nutzt *meld, zenity* und *rsync*
+> Nutzt *libreoffice* und *zenity*
 
 > slae 2012-08
 
