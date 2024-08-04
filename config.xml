@@ -1,91 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bk-script_options
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<office-starter_options
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xsd">
 
 	<general>
 		<version date="2024-08-03">1.0</version>
-		<verstxt> mit config.xml-Datei</verstxt>
+		<verstxt> mit config.xml-Datei!</verstxt>
 		<title>Office Vorlagen Starter</title>
 		<text>Vorlage auswählen :(v$version;$verstxt)</text>
 		<config>Einstellungen</config>
-		<confProg>geany</confProg>
-		<meld>??-Programm</meld>
+		<confProg>gedit</confProg>
+		<wordprog>soffice --nologo</wordprog>
+		<calcprog>???</calcprog>
 	</general>
 	<directories>
+<!-- kein ~ hier -->
 		<homeVerz>/home/stefan</homeVerz>
 		<stickort>/media/stefan</stickort>
 		<StdVerz>/slaekim</StdVerz>
 		<RemoteOrt>/mnt/iserv_laettig/Files</RemoteOrt>
+		<stdpath>/home/stefan/slae_kim/etc/vorlagen</stdpath> 
 	</directories>
 
-	<vergleiche>
-		<ordpaar>
+	<vorlagen>
+		<eintrag>
 		<id>00</id>
-		<name>SLAE01</name>
-<!-- keine Lücken im Namen / SLAEnn nur ALLEGROSS oder alleklein  ;-->
-		<dir1>~/slae_kim</dir1>
-		<dir2>$stickort/SLAE01$StdVerz</dir2>
-		</ordpaar>
-		<ordpaar>
+		<name>writer_(leer)</name>
+		<prog>$wordprog</prog>
+		<dir></dir>
+		<vorl></vorl>
+		</eintrag>
+		<eintrag>
 		<id>01</id>
-		<name>iservUSR</name>
-		<dir1>~/slae_kim/usr</dir1>
-		<dir2>$RemoteOrt/usr</dir2>
-		</ordpaar>
-		<ordpaar>
+		<name>slae__Brief</name>
+		<prog>$wordprog</prog>
+		<dir>$stdpath</dir>
+		<vorl>/LaeHomeBrief.ott</vorl>
+		</eintrag>
+		
+		<eintrag>
 		<id>02</id>
-		<name>iserv_unt</name>
-		<dir1>~/slae_unt</dir1>
-		<dir2>$RemoteOrt/unt</dir2>
-		</ordpaar>
-		<ordpaar>
+		<name>AB>>Physik_(Stand.)</name>
+<!-- keine Lücken im Namen -->
+		<prog>$wordprog</prog>
+		<dir>$stdpath/abf</dir>
+		<vorl>/ab_physik_K202008.ott</vorl> 
+		</eintrag>
+		
+		<eintrag>
 		<id>03</id>
-		<name>iservAusdruck</name>
-		<dir1>~/slae_kim/ausdruck</dir1>
-		<dir2>$RemoteOrt/ausdruck</dir2>
-		</ordpaar>
-		<ordpaar>
-		<id>04</id>
-		<name>ShuffleUnt</name>
-		<dir1>~/slae_kim/abf</dir1>
-		<dir2>~/slae_unt</dir2>
-		</ordpaar>
-		<ordpaar>
-		<id>05</id>
-		<name>SLAE03</name>
-		<dir1>~/slae_kim</dir1>
-		<dir2>$stickort/SLAE03$StdVerz</dir2>
-		</ordpaar>
-		<ordpaar>
-		<id>06</id>
-		<name>Keepass</name>
-		<dir1>~/.door3</dir1>
-		<dir2>$RemoteOrt/kp/myt</dir2>
-		</ordpaar>
+		<name>AB>>Mathe_(leer)</name>
+		<prog>$wordprog</prog>
+		<dir>$stdpath/abf</dir>
+		<vorl>/ab_matheL202010.ott</vorl> 
+		</eintrag>
+		
+		<eintrag>
+		<id>32</id>
+		<name>AB>>Mathe_(Karos)</name>
+		<prog>$wordprog</prog>
+		<dir>$stdpath/abf</dir>
+		<vorl>/ab_mathe201903.ott</vorl> 
+		</eintrag>
+		<eintrag>
+		<id>33</id>
+		<name>AB>>Mathe_(Klettco)</name>
+		<prog>$wordprog</prog>
+		<dir>$stdpath/abf</dir>
+		<vorl>/ue_mathe201903.ott</vorl> 
+		</eintrag>
+		
+		
+	</vorlagen>
 
-		<ordpaar>
-		<id>07</id>
-		<name>KIMocloud_td</name>
-		<dir1>???</dir1>
-		<dir2>???</dir2>
-		</ordpaar>
-
-		<ordpaar>
-		<id>08</id>
-		<name>BK_dokumente_td</name>
-		<dir1>~/dokumente</dir1>
-		<dir2>afp://stefan@willem.local/francois3/dokumente</dir2>
-		</ordpaar>
-
-		<ordpaar>
-		<id>09</id>
-		<name>rsync_push_td</name>
-		<dir1>???</dir1>
-		<dir2>???</dir2>
-		</ordpaar>
-	</vergleiche>
-
-</bk-script_options>
+</office-starter_options>
 <!-- Ende des XML-Dokumentes -->
-
