@@ -1,84 +1,156 @@
 #!/bin/bash
 
-################# config einlesen
-[[ -z "$cfile" ]] && cfile="config.xml"
-version=$(xml_grep 'version' "$cfile" --text_only) && verstxt=$(xml_grep 'verstxt' "$cfile" --text_only)
-scriptort=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Define associative array with desired elements & first allocation
+declare -A config_elements=(
+	[version]='version'
+	[version_strg]='verstxt'
+	[lang]='lang'
 
-title=$(xml_grep 'title' $cfile --text_only) 
-text=$(xml_grep 'text' "$cfile" --text_only) && text=${text/\$version/$version} && text=${text/\$verstxt/$verstxt} 
-config=$(xml_grep 'config' "$cfile" --text_only)
-[[ -z "$confProg" ]] && confProg=$(xml_grep 'confProg' "$cfile" --text_only)
+	[title_strg]='title'
+	[menue_strg]='menue'
+	[config_strg]='config'
+	[editor_prog]='confProg'
+    [word_processor_path]='wordprog'
+    [calculator_path]='calcprog'
 
-wordprog=$(xml_grep 'wordprog' "$cfile" --text_only) 
-calcprog=$(xml_grep 'calcprog' "$cfile" --text_only)
+    [home_directory]='homeVerz'
+    [storage_location]='stickort'
+    [standard_directory]='StdVerz'
+    [remote_location]='RemoteOrt'
+    [standard_path]='stdpath'
+)
+# Define parameter of template-group-elements
+declare -a id
+declare -a template_name
+declare -a template_prog
+declare -a template_param
+declare -a template_path
+declare -a template_file
 
-homeVerz=$(xml_grep 'homeVerz' "$cfile" --text_only)
-stickort=$(xml_grep 'stickort' "$cfile" --text_only)
-StdVerz=$(xml_grep 'StdVerz' "$cfile" --text_only)
-RemoteOrt=$(xml_grep 'RemoteOrt' "$cfile" --text_only)
-stdpath=$(xml_grep 'stdpath' "$cfile" --text_only)
+script_directory=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) # ????
 
-### Liste der möglichen Vergleiche (Ordner)
-ident+=($(xml_grep 'id' "$cfile" --text_only))
-optName+=($(xml_grep 'name' "$cfile" --text_only))
-prog+=($(xml_grep 'prog' "$cfile" --text_only))
-dir+=($(xml_grep 'dir' "$cfile" --text_only))
-vorl+=($(xml_grep 'vorl' "$cfile" --text_only))
-#dir1+=($(xml_grep 'dir1' "$cfile" --text_only)) #kw
-#dir2+=($(xml_grep 'dir2' "$cfile" --text_only)) #kw
+# Function to extract configuration values from XML
+extract_config_values() {
+    local -n ref=$1  # Use nameref for indirect variable assignment
 
-####
-for ((k = 0 ; k < ${#ident[@]} ; k++)); do 	# standard-Verzeichnis einsetzen oder korrigieren (~ zu /home/stefan/)
-	[[ ${dir[k]} =~ [~|\$] ]] &&
-		dir[k]=$(echo ${dir[k]}   | sed "s|~|${homeVerz}|;s|\$homeVerz|${homeVerz}|"  \
-								  |	sed "s|\$stickort|$stickort|" \
-								  |	sed "s|\$StdVerz|$StdVerz|" \
-								  |	sed "s|\$RemoteOrt|$RemoteOrt|" \
-								  |	sed "s|\$stdpath|$stdpath|" \
-																						)
-	[[ ${prog[k]} =~ [~|\$|p] ]] &&  # anpasenn??
-		prog[k]=$(echo ${prog[k]} | sed "s|~|${homeVerz}|;s|\$homeVerz|${homeVerz}|"  \
-								  |	sed "s|\$wordprog|$wordprog|" \
-								  |	sed "s|\$calcprog|$calcprog|" \
-								  
-																						)
-	done
-#[[ $cmdNr -lt ${#ident[@]} ]]  || unset cmdNr # wenn cmdNr nicht auf Liste loeschen
+    for element in "${!ref[@]}"; do
+		#replace first allocation with config-file-value
+        ref["$element"]=$(xml_grep "${ref[$element]}" "$config_file" --text_only 2>/dev/null)
+        [ -z "${ref[$element]}" ] && echo "Warning (8): '$element' not found in config file $config_file"
+    done
+}
 
-echo -e "eingelesen! >$cmdNr\n" # Testoption
+extract_options_values() {
+    local element="$1"    
+    xml_grep $element "$config_file" --text_only
+}
 
-#?????
-###
 ZeigeOptionen () { #fct alle Optionen zur Auswahl anzeigen/ Testoption
 
 	echo .
-declare -p | grep ident
-declare -p | grep optName
+#for i in "${!config_elements[@]}"; do
+    #echo -n "$i -->"
+    #echo ${config_elements[$i]}
+#done
 
-declare -p | grep prog
-#declare -p | grep dir
-#declare -p | grep vorl
-
-	#echo ${#options[*]}
-
-	echo $auswahl
-	#echo ${optName[8]}
+echo .
+# Debugging output
+echo "Extracted IDs: ${id[@]}"
+echo "Extracted Names: ${template_name[@]}"
+echo "Extracted progs: ${template_prog[@]}|"
+echo "Extracted param: ${template_param[@]}"
+echo "Extracted template_paths: ${template_path[@]}"
+echo "Extracted template_file: ${template_file[@]}"
+echo .
+	echo "Wahl: $selection""<-"
+	#echo ${template_name[8]}
 	echo .
 
-#	echo $(xml_grep 'version' "$cfile" --text_only)
-
-
+#	echo $(xml_grep 'version' "$config_file" --text_only)
 }
+
+# start #
+# Reading args  ???
+
+# Reading configuration file
+# Ensure the configuration file is set, defaulting to "config.xml" if not provided
+[[ -z "$config_file" ]] && config_file="${config_file:-config.xml}"   
+
+# Ensure the configuration file exists and is readable
+if [ ! -r "$config_file" ]; then
+	echo "Error: Configuration file '$config_file' is not readable." >&2
+	exit 1
+fi
+
+# Call function to extract values
+extract_config_values config_elements
+
+# Replace placeholders from config
+config_elements[menue_strg]="${config_elements[menue_strg]//\$version/${config_elements[version]}}"
+config_elements[menue_strg]="${config_elements[menue_strg]//\$verstxt/${config_elements[version_strg]}}"
+
+if [ -z "config_elements[editor_prog" ]; then
+echo "nuue Fehler (998)"
+# leer: kein commandzeiel oúnd/oder config leer dann gedit oder geany ???
+	confProg="${confProg:-$(xml_grep 'confProg' "$config_file" --text_only 2>/dev/null)}" || { 
+		echo "Error extracting confProg" >&2
+		exit 1
+	}
+fi
+
+# Extract IDs, names, paths etc. for templates
+id=($(extract_options_values 'id'))
+template_name=($(extract_options_values 'name' ))
+template_prog=($(extract_options_values 'prog'))
+template_param=($(extract_options_values 'param'))
+template_path=($(extract_options_values 'template_path'))
+template_file=($(extract_options_values 'template_file'))
+
+
+
+# Replace placeholders after reading
+for ((k = 0 ; k < ${#id[@]} ; k++)); do 	# standard-Verzeichnis einsetzen oder korrigieren (~ zu /home/stefan/)
+	if [[ ${template_path[k]} =~ [~|\$] ]]; then
+		template_path[k]=$(echo "${template_path[k]}" | sed "s|~|${config_elements[home_directory]}|; \
+                                                     s|\\\$homeVerz|${config_elements[home_directory]}|; \
+                                                     s|\\\$stdpath|${config_elements[standard_path]}|")
+															
+								  #|	sed "s|\$stickort|$stickort|" \				  #|	sed "s|\$StdVerz|$StdVerz|" \		  #|	sed "s|\$RemoteOrt|$RemoteOrt|" \
+								  #|	sed "s|\$stdpath|$stdpath|" 
+		
+	fi
+	if [[ ${template_prog[k]} =~ [~|\$] ]]; then
+		template_prog[k]=$(echo "${template_prog[k]}" | sed "s|~|${config_elements[home_directory]}|; \
+                                                      s|\\\$homeVerz|${config_elements[home_directory]}|; \
+                                                      s|\\\$wordprog|${config_elements[word_processor_path]}|; \
+                                                      s|\\\$calcprog|${config_elements[calculator_path]}|")
+	
+	fi
+done
+	
+#[[ $cmdNr -lt ${#id[@]} ]]  || unset cmdNr # wenn cmdNr nicht auf Liste loeschen ??? erst comamnd einlesen machen
+
+# Check the total number of template elements
+# (Calculate the number of templates by dividing the total by the number of template types)
+total_template_elements=$((${#template_name[@]} + ${#template_prog[@]} + ${#template_param[@]} + ${#template_path[@]} + ${#template_file[@]}))
+
+num_templates=$((total_template_elements / 5))
+
+# Check if the number of templates matches the number of IDs
+if [[ $num_templates -ne ${#id[@]} ]]; then
+    echo "Error: Parameter file '%s' is not well-filled (45)." >&2
+    exit 45
+fi
+
+
+echo -e "eingelesen! >$cmdNr\n" # Testoption
+
 #################
-
-
 
 #eintr22="AB>>Physik_(Stdquer?)"  prog22="$myprog -n $mypath/abf/ab_physik_K202008.ott"
 #eintr23="AB>>Physik_(Paetec)"   prog23="$myprog -n $mypath/abf/ab_physik_paetec201904.ott"
 #eintr24="AB>>Physik_(QUER_2Sp)"   prog24="$myprog -n $mypath/abf/ab_physik_2Q202002.ott"
 #eintr25="AB>>Physik_(QUER_3Sp)"   prog25="$myprog -n $mypath/abf/ab_physik_3Q202103.ott"
-
 
 
 #eintr61="LK_Physik_klass"       prog61="$myprog -n $mypath/lk_physik_OSpr_2311.ott"
@@ -88,8 +160,8 @@ declare -p | grep prog
 
 #eintr10="calc_(leer)"           prog10="$myprog -calc"
 #eintr90="Office_pur"            prog90="$myprog"
-#eintr99="Alle_Vorlagen"         prog99="caja $mypath"
-#config="Einstellungen"
+#eintr99="Alle_template_fileagen"         prog99="caja $mypath"
+#configStrg="Einstellungen"
 
 #eintraege="$eintr0 $eintr1 
 #$eintr2 $eintr22 $eintr23 $eintr24 $eintr25 $eintr26 -
@@ -98,56 +170,92 @@ declare -p | grep prog
 #$eintr8 
 #$eintr10 $eintr90 $eintr99"
 
-#eintraege="qw qed"
 
-ZeigeOptionen # Testoption
  
-######## Hauptfenster ########
-while [ ! "$auswahl" ] # Wiederanzeige bis Auswahl
-do
-	auswahl=`zenity --height "510" --width "450" \
-	--title "$title" --text "$text" \
-	--list --column="Eintraege"	${optName[*]} $config \
-	`
-#	auswahl=`zenity --list --column="Eintraege" $eintraege`
-	###### gewaehlt -> abgang ######
-	if  [ $? != 0 ]; then
-		exit 1
-	fi
-	[ $? -ne 0 ] && exit 2 # Abbruch
+######## Hauptfenster ######## config_elements[menue_strg]=
+# Loop until a selection is made
+while [ -z "$selection" ]; do
+    # Display the zenity list dialog
+    selection=`zenity --height "510" --width "450" \
+        --title "${config_elements[title_strg]}" --text "${config_elements[menue_strg]}" \
+        --list --column="Eintraege" "${template_name[@]}" "${config_elements[config_strg]}"`
+    # Check if the user canceled the dialog
+    if [ $? -ne 0 ]; then
+        echo "Dialog canceled by user (66)." # ??? dt? language? ueberhaupt nötig???
+        exit 1
+    fi
 done
 
-###
-for i in "${!optName[@]}"; do
-	[[ "${optName[$i]}" = "$auswahl" ]] && index=$i
-	done
-[[ -z $index ]] || auswahl=${optName[$index]} # Absicherung 
+# Match foundIndex to selection
+for i in "${!template_name[@]}"; do
+    if [[ "${template_name[$i]}" == "$selection" ]]; then
+        foundIndex=$i
+        break  # Exit the loop early once the foundIndex is found
+    fi
+done
 
-echo -e $auswahl"+++ "$index" +++"${ident[$index]}"##"#${prog[$index]} #Testoption
- 
+# Check if foundIndex is set and within bounds
+if [[ -n $foundIndex && foundIndex -ge 0 && foundIndex -lt ${#template_name[@]} ]]; then
+    selection=${template_name[$foundIndex]}
+else
+    echo "Error: Invalid index foundIndex (77)." >&2 # noetig ???
+    selection=""
+fi
+
+# Continue with the selected option
+
+# Replace "_" from config_file with ""
+[[ "${template_path[$foundIndex]}" == "_" ]] && template_path[$foundIndex]=""
+[[ "${template_file[$foundIndex]}" == "_" ]] && template_file[$foundIndex]=""
+
+
+ZeigeOptionen # Testoption
+echo "Selected: $selection" # Testversion
+
+echo -e $selection"+++ "$foundIndex" +++"${id[$foundIndex]}"##"#${template_prog[$foundIndex]}"<>""${template_path[$foundIndex]}${template_file[$foundIndex]}"#Testoption
+
+
+
+
+
 ### ?????  
-Konzepz ändern
--n geht nicht   wg. minus?
-loffice --writer geht nicht wg. Lücke
-( ${prog[$index]} --writer "" & ) 
+#Konzepz ändern
+#-n geht nicht   wg. minus?
+#loffice --writer geht nicht wg. Lücke
+#( ${prog[$foundIndex]} --writer "" & ) 
 
-exit 0
+# Construct the command to execute
+command_to_execute="${template_prog[$foundIndex]}  \"${template_path[$foundIndex]}${template_file[$foundIndex]}\""
+
+echo $command_to_execute
+# Execute the command
+exec $command_to_execute &
+
+exit 2
+
+# Execute the command
+${template_prog[$foundIndex]} "${template_path[$foundIndex]}${template_file[$foundIndex]}" &
+if [ $? -ne 0 ]; then
+    echo "(Fehler 666)"
+fi
+
+exit 2
 
 #### Aufruf ####
-case $auswahl in
-	$config)  	# script ändern)
-		$confProg "$scriptort${0:1}" || echo "Fehler 88"
+case $selection in
+	$configStrg)  	# script ändern)
+		#$confProg "$script_template_pathectory${0:1}" || echo "Fehler 88"
 		;;		
-	${optName[$index]})
-		#grep -q "/mnt/"   <<<"${dir1[$index]}" && verbunden "${dir1[$index]}"
-		#grep -q "/mnt/"   <<<"${dir2[$index]}" && verbunden "${dir2[$index]}"
+	${template_name[$foundIndex]})
+		#grep -q "/mnt/"   <<<"${template_path1[$foundIndex]}" && verbunden "${template_path1[$foundIndex]}"
+		#grep -q "/mnt/"   <<<"${template_path2[$foundIndex]}" && verbunden "${template_path2[$foundIndex]}"
 		###
-		( ${prog[$index]} "${dir[$index]}${vorl[$index]}" & ) || echo "(Fehler 66)" 
+		( ${template_prog[$foundIndex]} "${template_path[$foundIndex]}${template_file[$foundIndex]}" & ) || echo "(Fehler 66)" 
 		;;
 ###
 
-	$config)
-		$myedit $0
+	$configStrg)
+		#$myedit $0
 		;;
 	*) 			# caseelse
 		echo "Fehler 99 (caseelse)"
@@ -178,7 +286,7 @@ eintr8="Abi_mdl"                prog8="$myprog -n $mypath/prf_abi_202206.ott"
 
 eintr10="calc_(leer)"           prog10="$myprog -calc"
 eintr90="Office_pur"            prog90="$myprog"
-eintr99="Alle_Vorlagen"         prog99="caja $mypath"
+eintr99="Alle_template_fileagen"         prog99="caja $mypath"
 
 	$eintr0)
 		$prog0

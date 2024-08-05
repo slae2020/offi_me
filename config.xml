@@ -4,14 +4,15 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xsd">
 
 	<general>
-		<version date="2024-08-03">1.0</version>
-		<verstxt> mit config.xml-Datei!</verstxt>
+		<version date="2024-08-03">1.0a</version>
+		<verstxt> AI-improved</verstxt>
+		<lang>de</lang>
 		<title>Office Vorlagen Starter</title>
-		<text>Vorlage auswählen :(v$version;$verstxt)</text>
+		<menue>Vorlage auswählen (v$version;$verstxt):</menue>
 		<config>Einstellungen</config>
 		<confProg>gedit</confProg>
 		<wordprog>soffice --nologo</wordprog>
-		<calcprog>???</calcprog>
+		<calcprog>_</calcprog>
 	</general>
 	<directories>
 <!-- kein ~ hier -->
@@ -22,20 +23,25 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<stdpath>/home/stefan/slae_kim/etc/vorlagen</stdpath> 
 	</directories>
 
-	<vorlagen>
+	<template_fileagen>
+<!--
+		_ für nix/leer
+-->
 		<eintrag>
 		<id>00</id>
 		<name>writer_(leer)</name>
 		<prog>$wordprog</prog>
-		<dir></dir>
-		<vorl></vorl>
+		<param>_</param>
+		<template_path>_</template_path>
+		<template_file>_</template_file>
 		</eintrag>
 		<eintrag>
 		<id>01</id>
-		<name>slae__Brief</name>
+		<name>slae_Brief</name>
 		<prog>$wordprog</prog>
-		<dir>$stdpath</dir>
-		<vorl>/LaeHomeBrief.ott</vorl>
+		<param>n</param>
+		<template_path>$stdpath</template_path>
+		<template_file>/LaeHomeBrief.ott</template_file>
 		</eintrag>
 		
 		<eintrag>
@@ -43,35 +49,39 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<name>AB>>Physik_(Stand.)</name>
 <!-- keine Lücken im Namen -->
 		<prog>$wordprog</prog>
-		<dir>$stdpath/abf</dir>
-		<vorl>/ab_physik_K202008.ott</vorl> 
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_K202008.ott</template_file> 
 		</eintrag>
 		
 		<eintrag>
 		<id>03</id>
 		<name>AB>>Mathe_(leer)</name>
 		<prog>$wordprog</prog>
-		<dir>$stdpath/abf</dir>
-		<vorl>/ab_matheL202010.ott</vorl> 
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_matheL202010.ott</template_file> 
 		</eintrag>
 		
 		<eintrag>
 		<id>32</id>
 		<name>AB>>Mathe_(Karos)</name>
 		<prog>$wordprog</prog>
-		<dir>$stdpath/abf</dir>
-		<vorl>/ab_mathe201903.ott</vorl> 
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_mathe201903.ott</template_file> 
 		</eintrag>
 		<eintrag>
 		<id>33</id>
 		<name>AB>>Mathe_(Klettco)</name>
 		<prog>$wordprog</prog>
-		<dir>$stdpath/abf</dir>
-		<vorl>/ue_mathe201903.ott</vorl> 
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ue_mathe201903.ott</template_file> 
 		</eintrag>
 		
 		
-	</vorlagen>
+	</template_fileagen>
 
 </office-starter_options>
 <!-- Ende des XML-Dokumentes -->
