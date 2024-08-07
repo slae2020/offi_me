@@ -9,19 +9,19 @@ placeholder_space="#x0020"
 
 	<general>
 		<version date="2024-08-06">1.0beta</version>
-		<verstxt> AI-improved</verstxt>
+		<version_strg> AI-improved</version_strg>
 		<lang>de</lang>
-		<title>Office Vorlagen Starter</title>
-		<menue>Vorlage auswählen (v$version;$verstxt):</menue>
-		<config>Einstellungen</config>
-		<confProg></confProg>
-		<officeprog>soffice#x0020--nologo</officeprog>
+		<title_strg>Office Vorlagen Starter</title_strg>
+		<menue_strg>Vorlage auswählen (v$version;$verstxt):</menue_strg>
+		<config_strg>Einstellungen</config_strg>
+		<editor_prog>gedit</editor_prog>
+		<office_prog>soffice#x0020--nologo</office_prog>
 	</general>
 	<directories>
 <!-- kein ~ hier -->
-		<homeVerz>/home/stefan</homeVerz>
-		<stickort>/media/stefan</stickort>
-		<stdpath>/home/stefan/slae_kim/etc/vorlagen</stdpath> 
+		<home_directory>/home/stefan</home_directory>
+		<storage_location>/media/stefan</storage_location>
+		<standard_path>/home/stefan/slae_kim/etc/vorlagen</standard_path> 
 	</directories>
 
 	<vorlagen>
@@ -127,7 +127,7 @@ placeholder_space="#x0020"
 		</eintrag>
 		<eintrag>
 		<id>62</id>
-		<name>LK#x0020Physik#x0020mitSprBwtg</name>
+		<name>LK#x0020Physik#x0020mit#x0020SprachBewertung</name>
 		<prog>$officeprog</prog>
 		<param>n</param>
 		<template_path>$stdpath/abf</template_path>
