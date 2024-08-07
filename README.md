@@ -6,4 +6,6 @@
 
 > slae 2012-08
 
+> aktuell in v1.0 beta zum testen :)
+
 >                         ...
