@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-declare -ri test=0 #0 für kein test
-[[ $test -gt 0 ]] && echo $test"->Testversion!" # Testversion
+declare -i is_test_mode=1  # 1 for test mode, 0 for normal operation
 
 # Define a placeholder space character for use in a configuration file
 declare -r placeholder_space="#x0020"
@@ -19,12 +18,11 @@ declare -A config_elements=(
     [menue_strg]=''
     [config_strg]=''
     [editor_prog]=''
-    [office_prog]=''
+    [prog_strg]=''
     [home_directory]=''
     [storage_location]=''
     [standard_path]=''
 )
-
 # Define parameter of template-group-elements
 declare -a id
 declare -a template_name
@@ -32,13 +30,15 @@ declare -a template_prog
 declare -a template_param
 declare -a template_path
 declare -a template_file
+declare -i num_template_elements=5
 
 # Workparameters
+declare -i cmdNr=0 && unset cmdNr
 declare selection=""
 
 # Function to extract configuration single values from XML
 extract_config_values() {
-    local -n config_ref=$1  # Use nameref for indirect variable assignment
+    local -n config_ref=$1
 
     for element in "${!config_ref[@]}"; do
         # Get only values from conf-file when empty
@@ -47,7 +47,7 @@ extract_config_values() {
         fi
         # Warn if xml-tag is missing or empty
         if [[ -z "${config_ref[$element]}" ]]; then
-            [[ $test -gt 0 ]] && echo "Warning (8) for '$element': no value found in config file ${script_[config]}" || \
+            [[ $is_test_mode -gt 0 ]] && echo "Warning (8) for '$element': no value found in config file ${script_[config]}" || \
             message_exit "Warning for '$element': no value in config file ${script_[config]}" 8
             unset ${config_ref[$element]}
         fi
@@ -77,7 +77,7 @@ replace_placeholders() {
     for ((k = 0; k < ${#id[@]}; k++)); do
         ref[k]=$(replace_placeholder_strg "${ref[k]}" "~" "${config_elements[home_directory]}")
         ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$homeVerz" "${config_elements[home_directory]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$officeprog" "${config_elements[office_prog]}")
+        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$officeprog" "${config_elements[prog_strg]}")
         ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$stdpath" "${config_elements[standard_path]}")
         ref[k]=$(replace_placeholder_strg "${ref[k]}" "$placeholder_space" " ")
     done
@@ -89,26 +89,41 @@ message_exit() {
     local err=$2
     err="${err:-1}"
     if [[ $err -gt 0 ]]; then
-        zenity --error --title ${script_[name]} --text="$txt ($err)"
+        zenity --error --width "250" --title ${script_[name]} --text="$txt ($err)"
     fi
     echo $err
 }
 
+# Function to check if a path is readable
+check_path() {
+    local path=$1
+    local name=$2
+
+    if [[ $path =~ "/media/" ]]; then
+        check_stick "$path" "$name"
+    fi
+    if [[ $path =~ "/mnt/" ]]; then
+        check_mount "$path"
+    fi
+    if [[ !  -r "$path" ]]; then
+        message_exit "Config-Error: Path \n'$path'\n is not readable." 23
+        exit
+    fi
+}
+# Function to check availibility of a program
+check_prog() {
+    local prog_name=$1
+
+    if [[ ! -x "$(command -v $prog_name)" ]]; then
+        message_exit "Config-Error: program '$prog_name' not found." 74
+        exit
+    fi
+}
+
 # Display options for selection
-display_options () { 
+display_options () {
     echo .
-#   echo $(xml_grep 'version' "${script_[config]}" --text_only)
-
-#echo "scrpt_dir is:"${script_[dir]}
-#echo "scrpt_name is:"${script_[name]}
-#echo "cofg_file is:"${script_[config]}
-
-#echo .
-#echo ${script_[dir]}${script_[name]}
-#echo ${script_[dir]}${script_[config]}
-#echo .
-
-
+echo $cmdNr
 
 #for i in "${!config_elements[@]}"; do
     #echo -n "$i -->"
@@ -116,26 +131,24 @@ display_options () {
 #done
 
 echo .
-## Debugging output
-##echo "Extracted IDs: ${id[@]}"
-##echo "Extracted Names: ${template_name[@]}"
+# Debugging output
+#echo "Extracted IDs: ${id[@]}"
+#echo "Extracted Names: ${template_name[@]}"
 #echo "Extracted progs: ${template_prog[@]}|"
 #echo "Extracted param: ${template_param[@]}"
 #echo "Extracted template_paths: ${template_path[@]}"
-##echo "Extracted template_file: ${template_file[@]}"
-
-#echo "Wahl: $selection""<-"
-
-    echo .
+#echo "Extracted template_file: ${template_file[@]}"
+echo "Wahl: $selection""<- cmdNr->"$cmdNr"<"
 }
 
-# Start of script execution; # Reading arguments from commandline # -c "$cfile" -e geany -n automatisch# -h help
-while getopts ':c:e:n:h' OPTION; do 
+# Start of script execution; # Reading arguments from commandline # -c "$cfile" -e geany -n automatisch# -v verbose -h help
+while getopts ':c:e:n:vh' OPTION; do
     case "$OPTION" in
         c) script_[config]=${OPTARG} ;;
         e) config_elements[editor_prog]=${OPTARG} ;;
-        n) cmdNr=${OPTARG} || unset cmdNr ;;
-        ?|h) message_exit "Usage: $(basename $0) [-c Konfiguration.xml] [-e Editor] [-n id] [-h] \n   " 11; exit $? ;;
+        n) cmdNr=${OPTARG} ;;
+        v) is_test_mode=0 ;;
+        ?|h) message_exit "Usage: $(basename $0) [-c Konfiguration.xml] [-e Editor] [-n id] [-v] [-h] \n   " 11; exit ;;
     esac
 done
 
@@ -143,12 +156,7 @@ done
 
 # Ensure the configuration file is set, defaulting to "config.xml" if not provided
 [[ -z "${script_[config]}" ]] && script_[config]="${script_[config]:-config.xml}"
-
-# Ensure the configuration file exists and is readable
-if [ ! -r "${script_[dir]}${script_[config]}" ]; then
-    message_exit "Config-Error: Configuration file '${script_[dir]}${script_[config]}' is not readable." 23
-    exit $?
-fi
+check_path "${script_[dir]}${script_[config]}"
 
 # Call function to extract values
 extract_config_values config_elements
@@ -159,31 +167,35 @@ config_elements[menue_strg]=$(replace_placeholder_strg "${config_elements[menue_
 
 # Ensure the editor-prog is set, defaulting to "gedit" if not provided & checking existence
 [[ -z "${config_elements[editor_prog]}" ]] && config_elements[editor_prog]="${config_elements[editor_prog]:-gedit}"
-if [[ ! -x "$(command -v ${config_elements[editor_prog]})" ]]; then
-    message_exit "Config-Error: program '${config_elements[editor_prog]}' not found." 31
-    exit $?
-fi
+check_prog "${config_elements[editor_prog]}"
+check_prog "${config_elements[prog_strg]}" 
 
-# Extract IDs, names, paths etc. for templates
+# Extract IDs, names, paths etc.
 id=($(extract_options_values 'id'))
+
+# Check if id are integers
+for element in "${id[@]}"; do
+    if ! [[ "$element" =~ ^[0-9]+$ ]]; then
+        message_exit "Config-Error: identifier '$element' in config-file is not an integer." 32
+        exit
+    fi
+done
+
 template_name=($(extract_options_values 'name')) && replace_placeholders template_name
 template_prog=($(extract_options_values 'prog')) && replace_placeholders template_prog
 template_param=($(extract_options_values 'param')) && replace_placeholders template_param
 template_path=($(extract_options_values 'template_path')) && replace_placeholders template_path
 template_file=($(extract_options_values 'template_file')) && replace_placeholders template_file
 
-# Calculate the number of templates by dividing the total by the number of template types
-total_template_elements=$((${#template_name[@]} + ${#template_prog[@]} + ${#template_param[@]} + ${#template_path[@]} + ${#template_file[@]}))
-num_templates=$((total_template_elements / 5))
-
 # Check if the number of templates matches the number of IDs
-if [[ $num_templates -ne ${#id[@]} ]]; then
-    message_exit "Error: Parameter file is not well-filled." 45
-    exit $?
+if [ $(($((${#template_name[@]} + ${#template_prog[@]} + ${#template_param[@]} + ${#template_path[@]} + ${#template_file[@]})) / num_template_elements)) -ne ${#id[@]} ]; then
+    message_exit "Missing data: Config-file is not well-filled." 45
+    exit
 fi
 
-[[ $test -gt 0 ]] && echo -e "Konfiguration eingelesen! >$cmdNr<\n" # Testoption
-[[ $test -gt 0 ]] && display_options # Testoption
+[[ $is_test_mode -gt 0 ]] && echo "Konfiguration eingelesen! >$cmdNr<\n"
+[[ $is_test_mode -gt 0 ]] && echo "Starte....(Testversion) ......\n"
+[[ $is_test_mode -gt 0 ]] && display_options
 
 # Checking command-number if given
 if [[ -n "$cmdNr" ]]; then
@@ -191,7 +203,7 @@ if [[ -n "$cmdNr" ]]; then
         selection=$cmdNr
     else
         message_exit "Case '$cmdNr' not defined." 66
-        exit $?
+        exit
     fi
 fi
 
@@ -202,7 +214,7 @@ while [ -z "$selection" ]; do
         --list --column="Eintraege" "${template_name[@]}" "${config_elements[config_strg]}")
     if [ $? -ne 0 ]; then
         message_exit "Dialog canceled by user." 0
-        exit $?
+        exit
     fi
 done
 
@@ -212,7 +224,7 @@ for i in "${!template_name[@]}"; do
         foundIndex=$i
         break
     fi
-    if [[ "${id[$i]}" == "$selection" ]]; then
+    if [ "${id[$i]}" -eq "$selection" >/dev/null 2>&1 ]; then
         foundIndex=$i
         break
     fi
@@ -223,35 +235,44 @@ if [[ -n $foundIndex && foundIndex -ge 0 && foundIndex -lt ${#template_name[@]} 
     selection=${template_name[$foundIndex]}
 fi
 
-[[ $test -gt 0 ]] && echo "Selected: $selection" # Testversion
-[[ $test -gt 0 ]] && echo $selection"+++ "$foundIndex" +++"${id[$foundIndex]}"##"${template_prog[$foundIndex]}"<>""${template_path[$foundIndex]}${template_file[$foundIndex]}" #Testoption
+[[ $is_test_mode -gt 0 ]] && echo "Selected: $selection" # Testversion
+[[ $is_test_mode -gt 0 ]] && echo $selection"+++ "$foundIndex" +++"${id[$foundIndex]}"##"${template_prog[$foundIndex]}"<>""${template_path[$foundIndex]}${template_file[$foundIndex]}" #Testoption
 
 # Execution with the selected option
 case $selection in
+    ${config_elements[prog_strg]})
+        command_to_execute="${config_elements[prog_strg]}" #&& check_prog "$command_to_execute"
+        eval $command_to_execute & >/dev/null 2>&1
+        ;;
     ${config_elements[config_strg]})
         xfile="${script_[dir]}${script_[config]}"
+        check_path "$xfile" "nil"
         command_to_execute="${config_elements[editor_prog]} $xfile"
-        if [[ ! -f $xfile ]]; then
-            message_exit "File '$xfile' not found." 77
-            exit $?
-        else
-            $command_to_execute & >/dev/null 2>&1
-        fi
+        eval $command_to_execute & >/dev/null 2>&1
         ;;
     ${template_name[$foundIndex]})
-        command_to_execute="${template_prog[$foundIndex]} ${template_path[$foundIndex]}${template_file[$foundIndex]}"
-        if [[ ${template_file[$foundIndex]} =~ ".ott" && ! -r "${template_path[$foundIndex]}${template_file[$foundIndex]}" ]]; then
-            message_exit "'${template_path[$foundIndex]}${template_file[$foundIndex]}' \n not found." 05
-            exit $?
+        if [[ ${template_file[$foundIndex]} =~ ".ott" ]]; then
+            check_path "${template_path[$foundIndex]}${template_file[$foundIndex]}" "nil"
         fi
-        $command_to_execute & >/dev/null 2>&1
+        command_to_execute="${template_prog[$foundIndex]} ${template_path[$foundIndex]}${template_file[$foundIndex]}"
+        eval $command_to_execute & >/dev/null 2>&1
         ;;
     *)
         message_exit "Case '$selection' not defined." 99
-        exit $?
+        exit
         ;;
 esac
 
 exit 0
 
 ## ab hier junk
+
+#echo "scrpt_dir is:"${script_[dir]}
+#echo "scrpt_name is:"${script_[name]}
+#echo "cofg_file is:"${script_[config]}
+
+#echo .
+#echo ${script_[dir]}${script_[name]}
+#echo ${script_[dir]}${script_[config]}
+#echo .
+

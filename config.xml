@@ -15,7 +15,7 @@ placeholder_space="#x0020"
 		<menue_strg>Vorlage auswählen (v$version;$verstxt):</menue_strg>
 		<config_strg>Einstellungen</config_strg>
 		<editor_prog>gedit</editor_prog>
-		<office_prog>soffice#x0020--nologo</office_prog>
+		<prog_strg>soffice --nologo</prog_strg>
 	</general>
 	<directories>
 <!-- kein ~ hier -->
@@ -26,7 +26,8 @@ placeholder_space="#x0020"
 
 	<vorlagen>
 <!--
-		keine Lücken in name
+		id immer integer
+		keine Lücken in name & id
 		immer #x0020 für nix/leer 
 -->
 		<eintrag>
