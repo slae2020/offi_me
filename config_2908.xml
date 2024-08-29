@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<bk-script_options
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xsd">
+
+<!--
+placeholder_space="#x0020"
+-->
+
+	<general>
+		<version date="2024-08-29">1.2</version>
+		<version_strg>Anpassung bk_stick</version_strg>
+		<lang>de</lang>
+		<title_strg>Office Vorlagen Starter</title_strg>
+		<menue_strg>Vorlage auswählen (v$version; $verstxt):</menue_strg>
+		
+		<config_strg>Einstellungen</config_strg>
+		<editor_prog>gedit</editor_prog>
+		<prog_strg>soffice --nologo</prog_strg>
+	</general>
+	<directories>
+		<home_directory>/home/stefan</home_directory>
+		<storage_location>/media/stefan</storage_location>
+		<standard_path>/home/stefan/slae_kim/etc/vorlagen</standard_path> 
+		<remote_path> </remote_path>
+	</directories>
+
+	<vorlagen>
+<!--
+		id immer integer
+		keine Lücken in name & id
+		immer #x0020 für nix/leer 
+-->
+		<eintrag>
+		<id>00</id>
+		<name>writer#x0020(leer)</name>
+		<prog>$officeprog#x0020--writer</prog>
+		<param>Ersatz</param>
+		<template_path>Ersatz</template_path>
+		<template_file>Ersatz</template_file>
+		</eintrag>
+
+
+		<eintrag>
+		<id>01</id>
+		<name>slae#x0020Brief</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath</template_path>
+		<template_file>/LaeHomeBrief.ott</template_file>
+		</eintrag>
+		
+		<eintrag>
+		<id>02</id>
+		<name>AB>>Physik#x0020(Stand.)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_K202008.ott</template_file> 
+		</eintrag>
+		
+		<eintrag>
+		<id>03</id>
+		<name>AB>>Mathe#x0020(leer)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_matheL202010.ott</template_file> 
+		</eintrag>
+		
+		<eintrag>
+		<id>22</id>
+		<name>AB>>Physik#x0020(Stdquer?)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_K202008.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>23</id>
+		<name>AB>>Physik#x0020(Paetec)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_paetec201904.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>24</id>
+		<name>AB>>Physik#x0020(QUER#x00202Sp)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_2Q202002.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>25</id>
+		<name>AB>>Physik#x0020(QUER#x00203Sp)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_physik_3Q202103.ott</template_file> 
+		</eintrag>
+
+		
+		<eintrag>
+		<id>32</id>
+		<name>AB>>Mathe#x0020(Karos)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ab_mathe201903.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>33</id>
+		<name>AB>>Mathe#x0020(Klettco)</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/ue_mathe201903.ott</template_file> 
+		</eintrag>
+		
+		<eintrag>
+		<id>61</id>
+		<name>LK#x0020Physik#x0020klass</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/lk_physik_OSpr_2311.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>62</id>
+		<name>LK#x0020Physik#x0020mit#x0020SprachBewertung</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/lk_physik_Spr_2311.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>63</id>
+		<name>LK#x0020Mathe</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/lk_ma_202303.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>08</id>
+		<name>Abi#x0020mdl</name>
+		<prog>$officeprog</prog>
+		<param>n</param>
+		<template_path>$stdpath/abf</template_path>
+		<template_file>/prf_abi_202206.ott</template_file> 
+		</eintrag>
+		<eintrag>
+		<id>10</id>
+		<name>calc#x0020(leer)</name>
+		<prog>$officeprog#x0020--calc</prog>
+		<param>Ersatz</param>
+		<template_path>#x0020???</template_path>
+		<template_file>#x0020???</template_file>
+		</eintrag>
+		<eintrag>
+		<id>90</id>
+		<name>office#x0020(pur)</name>
+		<prog>$officeprog</prog>
+		<param>Ersatz</param>
+		<template_path>Ersatz</template_path>
+		<template_file>Ersatz</template_file>
+		</eintrag>
+		<eintrag>
+		<id>99</id>
+		<name>Alle#x0020Vorlagen</name>
+		<prog>caja#x0020$stdpath</prog>
+		<param>Ersatz</param>
+		<template_path>Ersatz</template_path>
+		<template_file>Ersatz</template_file>
+		</eintrag>
+	</vorlagen>
+
+</bk-script_options>
+<!-- Ende des XML-Dokumentes -->
+
