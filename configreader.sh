@@ -4,6 +4,16 @@ source declarations.sh
 source checker.sh
 source tester.sh
 
+# Define standardnames
+declare config_stdname="config.xml"
+
+# Define general parameters for config-file
+declare -A script_=(
+    [dir]=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
+    [name]=$(basename "$(readlink -f "$0")" .sh)
+    [config]="$config_stdname"
+)
+
 #init_messenger
 messenger_top_text=${script_[name]^^*}
 
@@ -26,11 +36,16 @@ check_scriptpath_is_set() {
 # Function to extract configuration single values one by one
 extract_config_values() {
     local -n config_ref=$1
+    local -n config_def=$2
 
     for name_element in "${!config_ref[@]}"; do
-        # Get only values from conf-file when empty
+        # Get only values from conf-file when empty  ???? bedingt aber, dass man in declaration keine nGrundwert zuordenen kannn
         if [[ -z ${config_ref["$name_element"]} ]]; then
             config_ref["$name_element"]=$(xml_grep "$name_element" "${script_[config]}" --text_only 2>/dev/null)
+        fi
+        # Check if still empty use std-value
+        if [[ -z ${config_ref["$name_element"]} ]];  then
+            config_ref["$name_element"]="${config_def["$name_element"]}"
         fi
         # Warn if xml-tag is missing or empty
         if [[ -z "${config_ref[$name_element]}" ]]; then
@@ -55,13 +70,12 @@ replace_placeholder_strg() {
 # Function to replace specific placeholders after reading
 replace_placeholders() {
     local -n ref=$1
+
     for ((k = 0; k < ${#id[@]}; k++)); do
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "~" "${config_elements[home_directory]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$homeVerz" "${config_elements[home_directory]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$stickort" "${config_elements[storage_location]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$stdpath" "${config_elements[standard_path]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$remotepath" "${config_elements[remote_path]}")
-        ref[k]=$(replace_placeholder_strg "${ref[k]}" "$placeholder_space" " ")
+        for ((j = ${#placeholder[@]} - 1; j >= 0; j--)); do
+            ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$${placeholder[j]}" "${config_elements[${placeholder[j]}]}")
+        done
+
     done
 }
 
@@ -129,11 +143,10 @@ read_alloptions() {
     read_options opti7
     num_options=$(( $(count_options opti7 $num_options) ))
 
-
     # Check correct count of options
     rate=$(( $num_options % $num_elements ))
     if [ $rate -ne 0 ]; then
-        message_exit "Missing data: Config-file '$1' with '$num_options MOD $num_elements' item(s) is not well-filled." 45
+        message_exit "Missing data: Config-file '$1' with '$num_options MOD $num_elements' item(s) is not well-filled." 45 #???
     fi
 }
 
@@ -164,16 +177,18 @@ read_configuration() {
     [[ $is_test_mode -gt 0 ]] && message_notification "Reading configuration file \n\n${script_[config]}." 1
 
     # Call function to extract values
-    extract_config_values config_elements
+    extract_config_values config_elements config_std
 
-    # Replace placeholders from config
-    config_elements[menue_strg]=$(replace_placeholder_strg "${config_elements[menue_strg]}" "\$version" "${config_elements[version]}")
-    config_elements[menue_strg]=$(replace_placeholder_strg "${config_elements[menue_strg]}" "\$verstxt" "${config_elements[version_strg]}")
-
-    # Ensure the editor-prog is set, defaulting to "gedit" if not provided & checking existence
-    [[ -z "${config_elements[editor_prog]}" ]] && config_elements[editor_prog]="${config_elements[editor_prog]:-gedit}"
-    check_prog "${config_elements[editor_prog]}"
-    check_prog "${config_elements[prog_strg]}"
+    ## Replace placeholders from config & Ensure the progs ares set
+    for ((i = 0; i < ${#placeholder[@]}; i++)); do
+        if [[ ${placeholder[i]} =~ "dialog_" ]]; then
+            config_elements[${placeholder[i]}]=$(replace_placeholder_strg "${config_elements[${placeholder[i]}]}" "\$version1" "${config_elements[version1]}")
+            config_elements[${placeholder[i]}]=$(replace_placeholder_strg "${config_elements[${placeholder[i]}]}" "\$version2" "${config_elements[version2]}")
+        fi
+        if [[ ${placeholder[i]} =~ "_prog" ]]; then
+            check_prog "${config_elements[${placeholder[i]}]}"
+        fi
+    done
 
     read_alloptions ${script_[config]}
 
@@ -187,6 +202,11 @@ return
 # exex test
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 is_test_mode=1
+
+ for ((jj = ${#placeholder[@]}; jj >= 0; jj--)); do
+            echo $jj
+        done
+
 
 read_configuration "/home/stefan/perl/Bakki-the-stickv1.2beta/config_2408.xml"
 

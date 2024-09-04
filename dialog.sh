@@ -14,6 +14,11 @@ declare messenger_column1_text="Options"
 declare dialog_height
 declare dialog_width
 
+declare -A rep_strg
+
+rep_strg[lage]="orte"
+rep_strg[version]="55"
+
 # Change display-size h & w
 setdisplay() {
 	dialog_height=$1

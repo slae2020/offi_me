@@ -1,37 +1,80 @@
 #!/usr/bin/env bash
 
 # Define a placeholder space character for use in a configuration file
-declare placeholder_space="#x0020"
+#declare placeholder_space="#x0020"  #???? -->placeholder [0]
 
-# Define standardnames
-declare config_stdname="config.xml"
-
-# Define general parameters for config-file
-declare -A script_=(
-    [dir]=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
-    [name]=$(basename "$(readlink -f "$0")" .sh)
-    [config]="$config_stdname"
-)
 
 ################################
 # Declarations for Offime only #
 ################################
 
-# Define associative arrays with desired elements & first allocation
-declare -A config_elements=(
-    [version]=''
-    [version_strg]=''
-    [lang]='en-GB'
-    [title_strg]=''
-    [menue_strg]=''
-    [config_strg]=''
-    [editor_prog]=''
-    [prog_strg]=''
-    [home_directory]=''
-    [storage_location]=''
-    [standard_path]=''
-    [remote_path]=''
+# Define placeholders for config-xml-file
+declare -a placeholder=(   # ??? Name ändern?
+	[0]='space'
+	
+	# general
+	[1]='version1'
+	[2]='version2'
+	[3]='lang|de-DE'
+	
+	# for dialogues
+	[4]='dialog_title'
+	[5]='dialog_menue'
+	[6]='dialog_config'
+	
+	# progs for setting & main
+	[7]='std_prog|soffice' 
+	[8]='name_stdprg|Office'
+	[9]='editor_prog|gedit' 	
+	
+	# directories
+	[10]='home_dir|~' 
+	[11]='std_dir' 
+	[12]='usb_dir' 
+	[13]='remote_dir|' 
+	
+	
 )
+
+# Define associative arrays with desired elements & first allocation
+#declare -A config_elements2=(
+    #[version]=''
+    #[version_strg]=''
+    
+    #[lang]='en-GB'
+    #[title_strg]=''
+    #[menue_strg]=''
+    #[config_strg]=''
+    
+    #[${placeholder[0]}]=' '
+    #[${placeholder[1]}]=''
+    #[${placeholder[2]}]=''
+    #[${placeholder[3]}]=''
+    #[${placeholder[4]}]=''
+    #[${placeholder[5]}]=''
+    #[${placeholder[6]}]=''  
+#)
+
+declare -A config_elements    #??? nach configreader?
+declare -A config_std
+for ((k = 0; k < ${#placeholder[@]}; k++)); do
+	config_elements[${placeholder[k]%%|*}]=""
+	# Fill standard-values
+	if [[ ${placeholder[k]} =~ "|" ]]; then
+		#echo $k
+		config_std[${placeholder[k]%%|*}]=${placeholder[k]##*|}
+		placeholder[k]=${placeholder[k]%%|*}
+	else
+		#echo $k
+		config_std[${placeholder[k]%%|*}]="" #${placeholder[k]} ???
+	fi
+done
+
+#echo "www"
+#declare -p placeholder
+##declare -p config_elements2
+#echo .
+#declare -p config_elements
 
 # Define parameter of sync-group-elements
 declare -a id;
@@ -50,9 +93,14 @@ declare -i cmdNr=0 && unset cmdNr
 declare selection=""
 declare selectedIndex=""
 
-#return
+return
 
 
+
+declare -p config_elements
+declare -p config_std
+
+exit 0
 
 #### junk
 
@@ -69,8 +117,23 @@ declare selectedIndex=""
 #declare -a sync_dir1    #optti2
 #declare -a sync_dir2    #oppti3
 
-declare -a template_name
-declare -a template_prog
-declare -a template_param
-declare -a template_path
-declare -a template_file
+#declare -a template_name
+#declare -a template_prog
+#declare -a template_param
+#declare -a template_path
+#declare -a template_file
+
+
+declare var='erstes|zweites'
+#var="wewr|"
+#var="|uer"
+echo $var
+
+#eins=$(echo $var | sed "s/\|*/ ./" )
+eins=${var%%|*}
+
+#eins=$( echo $var | sed 's/\|.*//s')
+
+echo $eins
+zwo=${var##*|}
+echo $zwo

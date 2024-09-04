@@ -37,6 +37,9 @@ display_options () {
         declare -p opti1 #echo "Extracted Names: ${opti1[@]}"
         declare -p opti2 #echo "Extracted 1    : ${opti2[@]}"
         declare -p opti3  #echo "Extracted 2   s: ${opti3[@]}"
+        declare -p opti4
+        declare -p opti5
+        declare -p opti6
         ;;
     esac
     echo .

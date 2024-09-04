@@ -19,8 +19,8 @@ check_path() {
     if [[ ! -r "$path" ]]; then
 
         path="${path:-   }"
-        #message_exit "Config-Error: Path \n'$path'\n is missing or not readable." 21
-        #exit
+        message_exit "Config-Error: Path \n'$path'\n is missing or not readable." 21 ???
+        exit
     fi
     #echo "felix"
 }
@@ -42,7 +42,7 @@ check_usb() {
 check_mount() {
     local mounted_path=$1
     local test_subdir=$mounted_path"/."
-echo $test_subdir
+#echo $test_subdir #???
 
     # Check if the mount-directory is accessible
     if [[ ! -r "$test_subdir" ]]; then

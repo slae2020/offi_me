@@ -30,8 +30,8 @@ fi
 # Loop until a selection is made
 while [ -z "$selection" ]; do
     setdisplay 350 450
-    selection=$(ask_to_choose "${config_elements[title_strg]}" "${config_elements[menue_strg]}" \
-            ""    opti1 "${config_elements[prog_strg]}" "${config_elements[config_strg]}")  # "" oder Optionen oder Options ???
+    selection=$(ask_to_choose "${config_elements[dialog_title]}" "${config_elements[dialog_menue]}" \
+            ""    opti1 "${config_elements[name_stdprg]}" "${config_elements[dialog_config]}")  # "" oder Optionen oder Options ???
     if [[ $selection == $is_cancel ]]; then
         message_exit "Dialog canceled by user." 0
         exit
@@ -57,15 +57,16 @@ if [[ -n $selectedIndex && selectedIndex -ge 0 && selectedIndex -lt ${#opti1[@]}
 fi
 
 [[ $is_test_mode -gt 0 ]] && echo "Selected: $selection" # Testversion
-[[ $is_test_mode -gt 0 ]] && echo $selection"+++ "$selectedIndex" +++"${id[$selectedIndex]}"##"${opti2[$selectedIndex]}"<-->"${opti3[$selectedIndex]}"" #Testoption
+[[ $is_test_mode -gt 0 ]] && echo $selection"+++ "$selectedIndex" +++"${id[$selectedIndex]}"##"${opti2[$selectedIndex]}"<--p3>"${opti3[$selectedIndex]}"" #Testoption
+[[ $is_test_mode -gt 0 ]] && echo "##4>"${opti4[$selectedIndex]}"<--5>"${opti5[$selectedIndex]}"<"
 
 # Execution with the selected option
 case $selection in
-    ${config_elements[prog_strg]})
-        command_to_execute="${config_elements[prog_strg]}"
+    ${config_elements[std_prog]} | ${config_elements[name_stdprg]})  
+        command_to_execute="${config_elements[std_prog]}"
         eval $command_to_execute & >/dev/null 2>&1
         ;;
-    ${config_elements[config_strg]})
+    ${config_elements[dialog_config]})
         command_to_execute="${config_elements[editor_prog]} ${script_[config]}"
         eval $command_to_execute & >/dev/null 2>&1
         ;;
