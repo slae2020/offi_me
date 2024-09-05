@@ -6,7 +6,7 @@
 display_options () {
     local select=$1
     echo .
-    echo "Testmodus: Display varis for debugging info ($select): "
+    echo "(t) Display varis for debugging info ($select): "
 
     case $select in
         1) echo $cmdNr ;;
@@ -24,7 +24,7 @@ display_options () {
         4)
         for i in "${!config_elements[@]}"; do
             echo -n "$i -->"
-            echo ${config_elements[$i]}
+            echo "${config_elements[$i]}""<"
         done
         ;;
         5)
@@ -34,21 +34,20 @@ display_options () {
         6)
         echo .
         echo "Extracted IDs: ${id[@]}"
-        declare -p opti1 #echo "Extracted Names: ${opti1[@]}"
-        declare -p opti2 #echo "Extracted 1    : ${opti2[@]}"
-        declare -p opti3  #echo "Extracted 2   s: ${opti3[@]}"
+        declare -p opti1 
+        declare -p opti2 
+        declare -p opti3 
         declare -p opti4
         declare -p opti5
         declare -p opti6
         ;;
     esac
     echo .
-    echo "Wahl: $selection""<- cmdNr->"$cmdNr"<"
+    echo "(t) Wahl: >$selection""<- cmdNr->"$cmdNr"<"
 }
 
 # Routine zum exit mit
 teststop() {
     echo "teststop "$1
     message_exit "Teststopp hier. $1" 0
-
 }

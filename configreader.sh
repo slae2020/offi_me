@@ -39,7 +39,7 @@ extract_config_values() {
     local -n config_def=$2
 
     for name_element in "${!config_ref[@]}"; do
-        # Get only values from conf-file when empty  ???? bedingt aber, dass man in declaration keine nGrundwert zuordenen kannn
+        # Get only values from conf-file when empty  
         if [[ -z ${config_ref["$name_element"]} ]]; then
             config_ref["$name_element"]=$(xml_grep "$name_element" "${script_[config]}" --text_only 2>/dev/null)
         fi
@@ -48,34 +48,35 @@ extract_config_values() {
             config_ref["$name_element"]="${config_def["$name_element"]}"
         fi
         # Warn if xml-tag is missing or empty
-        if [[ -z "${config_ref[$name_element]}" ]]; then
-            [[ $is_test_mode -gt 0 ]] && echo "Warning (8) for '$name_element': no value from config file \n${script_[config]}" || \
+        if [[ -z "${config_ref[$name_element]}" && ! $name_element =~ "\." ]]; then
+            [[ $is_test_mode -gt 0 ]] && echo "(t) Warning (8) for '$name_element': no value from config file \n${script_[config]}" || \
             message_exit "Warning for '$name_element': no value from config file \n${script_[config]}" 8
             unset ${config_ref[$name_element]}
         fi
     done
 }
 
-# Function to replace defined placeholder from config-file into string
-replace_placeholder_strg() {
-    local input=$1
-    local placeholder=$2
-    local replacement=$3
-    if [[ $input =~ [$placeholder] ]]; then
-        input=$(echo "$input" | sed "s|$placeholder|$replacement|g")
+# Function to replace all occurrencies
+replace_all_strings() {
+    local fullstring=$1         
+    local old_substrg=$2
+    local new_substrg=$3
+    if [[ $fullstring =~ [$old_substrg] ]]; then
+        fullstring=$(echo "$fullstring" | sed "s|$old_substrg|$new_substrg|g")
     fi
-    echo $input
+    echo $fullstring
 }
 
 # Function to replace specific placeholders after reading
 replace_placeholders() {
     local -n ref=$1
-
     for ((k = 0; k < ${#id[@]}; k++)); do
-        for ((j = ${#placeholder[@]} - 1; j >= 0; j--)); do
-            ref[k]=$(replace_placeholder_strg "${ref[k]}" "\$${placeholder[j]}" "${config_elements[${placeholder[j]}]}")
+        for ((j = ${#attribution[@]} - 1; j >= 0; j--)); do
+            ref[k]=$(replace_all_strings "${ref[k]}" "\$${attribution[j]}" "${config_elements[${attribution[j]}]}")
+            if [[ -z ${ref[k]} ]]; then
+				unset ref[k]
+			fi			
         done
-
     done
 }
 
@@ -154,7 +155,7 @@ read_alloptions() {
 done_configuration() {
 [[ $is_test_mode -gt 0 ]] && echo "(t)Konfiguration eingelesen! >$cmdNr<\n"
 [[ $is_test_mode -gt 0 ]] && echo "(t)Starte....${script_[name]} (Testversion) ......\n"
-[[ $is_test_mode -gt 0 ]] && display_options 6
+[[ $is_test_mode -gt 0 ]] && display_options 4
 [[ $is_test_mode -gt 0 ]] && message_notification "(t)Configuration \n'$1'\nloaded!.      >$cmdNr<\n" 1 &
 }
 
@@ -174,19 +175,19 @@ read_configuration() {
         xfile="${script_[config]}"
     fi
 
-    [[ $is_test_mode -gt 0 ]] && message_notification "Reading configuration file \n\n${script_[config]}." 1
+    [[ $is_test_mode -gt 0 ]] && message_notification "Reading configuration file \n\n${script_[config]}." 1 && echo "(t) start"
 
     # Call function to extract values
     extract_config_values config_elements config_std
 
     ## Replace placeholders from config & Ensure the progs ares set
-    for ((i = 0; i < ${#placeholder[@]}; i++)); do
-        if [[ ${placeholder[i]} =~ "dialog_" ]]; then
-            config_elements[${placeholder[i]}]=$(replace_placeholder_strg "${config_elements[${placeholder[i]}]}" "\$version1" "${config_elements[version1]}")
-            config_elements[${placeholder[i]}]=$(replace_placeholder_strg "${config_elements[${placeholder[i]}]}" "\$version2" "${config_elements[version2]}")
+    for ((i = 0; i < ${#attribution[@]}; i++)); do
+        if [[ ${attribution[i]} =~ "dialog_" ]]; then
+            config_elements[${attribution[i]}]=$(replace_all_strings "${config_elements[${attribution[i]}]}" "\$version1" "${config_elements[version1]}") #????
+            config_elements[${attribution[i]}]=$(replace_all_strings "${config_elements[${attribution[i]}]}" "\$version2" "${config_elements[version2]}")
         fi
-        if [[ ${placeholder[i]} =~ "_prog" ]]; then
-            check_prog "${config_elements[${placeholder[i]}]}"
+        if [[ ${attribution[i]} =~ "_prog" ]]; then
+            check_prog "${config_elements[${attribution[i]}]}"
         fi
     done
 
@@ -194,7 +195,7 @@ read_configuration() {
 
     done_configuration ${script_[config]}
 
-    [[ $is_test_mode -gt 0 ]] && echo ${script_[config]}
+    [[ $is_test_mode -gt 0 ]] && echo "(t)"${script_[config]}
 }
 
 return
@@ -203,7 +204,7 @@ return
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 is_test_mode=1
 
- for ((jj = ${#placeholder[@]}; jj >= 0; jj--)); do
+ for ((jj = ${#attribution[@]}; jj >= 0; jj--)); do
             echo $jj
         done
 
