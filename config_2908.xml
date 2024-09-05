@@ -3,10 +3,6 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xsd">
 
-<!--
-placeholder_space="#x0020"
--->
-
 	<general>
 		<space> </space>
 		<version1 date="2024-08-29">1.2</version1>
@@ -15,6 +11,7 @@ placeholder_space="#x0020"
 		<dialog_title>Office Vorlagen Starter</dialog_title>
 		<dialog_menue>Vorlage auswählen (v$version1$version2):</dialog_menue>
 		<dialog_config>Einstellungen</dialog_config>
+		<dialog_column1>Optionen</dialog_column1>
 
 		<editor_prog></editor_prog>
 		<std_prog>soffice --nologo</std_prog>
@@ -31,7 +28,7 @@ placeholder_space="#x0020"
 <!--
 		id immer integer
 		keine Lücken in name & id
-		immer #x0020 für nix/leer 
+		immer $space minimum für nix/leer 
 -->
 		<eintrag>
 		<id>00</id>
@@ -158,8 +155,8 @@ placeholder_space="#x0020"
 		<name>calc$space(leer)</name>
 		<prog>$std_prog$space--calc</prog>
 		<param>Ersatz</param>
-		<template_path>$space???</template_path>
-		<template_file>$space???</template_file>
+		<template_path>???</template_path>
+		<template_file>???</template_file>
 		</eintrag>
 		
 		<eintrag>
@@ -168,7 +165,7 @@ placeholder_space="#x0020"
 		<prog>caja$space$std_dir</prog>
 		<param>Ersatz</param>
 		<template_path>~/Ersatz</template_path>
-		<template_file>$space</template_file>
+		<template_file>???</template_file>
 		</eintrag>
 	</vorlagen>
 
