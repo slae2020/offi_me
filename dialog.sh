@@ -14,20 +14,15 @@ declare messenger_column1_text="Options"
 declare dialog_height
 declare dialog_width
 
-declare -A rep_strg
-
-rep_strg[lage]="orte"
-rep_strg[version]="55"
-
 # Change display-size h & w
 setdisplay() {
-	dialog_height=$1
-	dialog_width=$2
+    dialog_height=$1
+    dialog_width=$2
 }
 
 resetdisplay() {
-	dialog_height=200  #350
-	dialog_width=240   #250
+    dialog_height=200  #350
+    dialog_width=240   #250
 }
 
 # Check if variable is an array [$1: variable name]
@@ -69,7 +64,20 @@ message_notification() {
     local -i time=$2
 
     if [[ $time -gt 0 ]]; then
+		[[ $is_test_mode -gt 0 ]] && echo "(t) $messenger_top_text\n "" $txt" || \
         zenity --notification  --height $dialog_height --width $dialog_width --window-icon="info" --text="$messenger_top_text\n""$txt" --timeout=$time &
+    fi
+}
+
+# Test and exit-message if not zero
+message_test_exit() {
+    local result=$1
+    local txt=$2
+    local err=$3
+
+    if [[ $result -ne 0 ]]; then
+        [[ $is_test_mode -gt 0 ]] && echo "(t) $txt '$result?' $err" || \
+        message_exit "$txt '$result?' " $err
     fi
 }
 
@@ -86,13 +94,13 @@ ask_to_continue() {
 }
 
 # Ask for selection out of list; first 3 strings for titles etc; $is_cancel if no choose
-ask_to_choose() {  
+ask_to_choose() {
     local -n main_options
     local -a additional_options
     local -a dialog_texts
 
-	#Loop for reading $@ (one! array for options-array)
-	local i=0; local j=1
+    #Loop for reading $@ (one! array for options-array)
+    local i=0; local j=1
     while [[ -n $@ ]]; do
         if [[ $(is_array $1) -eq 0 ]]; then
             main_options=$1
@@ -109,7 +117,7 @@ ask_to_choose() {
     shift
     done
 
-	# Merge & Defaults if not found
+    # Merge & Defaults if not found
     main_options=("${main_options[@]}" "${additional_options[@]}")
     dialog_texts[1]=${dialog_texts[1]:-$messenger_top_text}
     dialog_texts[2]=${dialog_texts[2]:-$messenger_sub_text}
@@ -117,7 +125,7 @@ ask_to_choose() {
 
     answer=$(zenity --list --height $dialog_height --width $dialog_width \
              --title "${dialog_texts[1]}" --text="${dialog_texts[2]}" \
-             --column="${dialog_texts[3]}" "${main_options[@]}" )    
+             --column="${dialog_texts[3]}" "${main_options[@]}" )
     if [ $? -ne 0 ]; then
         answer=$is_cancel
     fi

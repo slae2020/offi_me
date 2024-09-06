@@ -19,7 +19,7 @@ check_path() {
     if [[ ! -r "$path" ]]; then
 
         path="${path:-   }"
-        message_exit "Config-Error: Path \n'$path'\n is missing or not readable." 21 ???
+        message_exit "Config-Error: Path \n'$path'\n is missing or not readable." 21
         exit
     fi
     #echo "felix"
@@ -42,7 +42,6 @@ check_usb() {
 check_mount() {
     local mounted_path=$1
     local test_subdir=$mounted_path"/."
-#echo $test_subdir #???
 
     # Check if the mount-directory is accessible
     if [[ ! -r "$test_subdir" ]]; then
@@ -63,6 +62,22 @@ check_prog() {
     if [[ ! -x "$(command -v $prog_name)" ]]; then
         message_exit "Config-Error: program '$prog_name' not found." 24
     fi
+}
+
+# Validate and modify a path based on certain conditions
+check_scriptpath_is_set() {
+    local local_cust_path=$1          # The custom path to use if provided
+    local -n local_script=${2:-nil}   # The array where scriptpath is stored
+    local local_dir=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
+
+    # Modify local_cust_path if its directory is the current directory
+    if [[ "$(dirname "$local_cust_path")" == "." ]]; then
+        local_cust_path="$local_dir$local_cust_path"
+    fi
+
+    check_path "$local_cust_path"
+    #return:
+    local_script[config]="$local_cust_path"
 }
 
 return

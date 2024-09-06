@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="office-starter_options">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="general"/>
+        <xs:element ref="directories"/>
+        <xs:element ref="vorlagen"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="general">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="space" type="xs:string"/>
+        <xs:element ref="version1"/>
+        <xs:element name="version2" type="xs:string"/>
+        <xs:element name="lang" type="xs:string"/>
+        <xs:element name="dialog_title" type="xs:string"/>
+        <xs:element name="dialog_menue" type="xs:string"/>
+        <xs:element name="dialog_config" type="xs:string"/>
+        <xs:element name="dialog_column1" type="xs:string"/>
+        <xs:element name="editor_prog" type="xs:string"/>
+        <xs:element name="std_prog" type="xs:string"/>
+        <xs:element name="name_stdprg" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="version1">
+    <xs:complexType mixed="true">
+      <xs:attribute name="date" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="directories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="home_dir" type="xs:string"/>
+        <xs:element name="std_dir" type="xs:string"/>
+        <xs:element name="usb_dir" type="xs:string"/>
+        <xs:element name="remote_dir" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vorlagen">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="eintrag" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eintrag">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:string"/>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="prog" type="xs:string"/>
+        <xs:element name="param" type="xs:string"/>
+        <xs:element name="template_path" type="xs:string"/>
+        <xs:element name="template_file" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

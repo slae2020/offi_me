@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#source declarations.sh
+declare -i is_test_mode=1  # 1 for test mode, 0 for normal operation
 
 # Display options for selection
 display_options () {
@@ -28,12 +28,17 @@ display_options () {
         done
         ;;
         5)
-        echo "Extracted IDs: ${id[@]}"
-        echo "Extracted Names: ${opti1[@]}"
+        
         ;;
         6)
         echo .
         echo "Extracted IDs: ${id[@]}"
+        echo ${#opti1[@]}"<-->" 
+        echo ${#opti2[@]}"<-->"
+        echo ${#opti3[@]}"<-->"
+        echo ${#opti4[@]}"<-->"
+        echo ${#opti5[@]}"<-->"
+        echo ${#opti6[@]}"<-->"
         declare -p opti1 
         declare -p opti2 
         declare -p opti3 

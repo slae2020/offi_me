@@ -17,29 +17,13 @@ declare -A script_=(
 #init_messenger
 messenger_top_text=${script_[name]^^*}
 
-# Validate and modify a path based on certain conditions
-check_scriptpath_is_set() {
-    local local_cust_path=$1          # The custom path to use if provided
-    local -n local_script=${2:-nil}   # The array where scriptpath is stored
-    local local_dir=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
-
-    # Modify local_cust_path if its directory is the current directory
-    if [[ "$(dirname "$local_cust_path")" == "." ]]; then
-        local_cust_path="$local_dir$local_cust_path"
-    fi
-
-    check_path "$local_cust_path"
-    #return:
-    local_script[config]="$local_cust_path"
-}
-
 # Function to extract configuration single values one by one
 extract_config_values() {
     local -n config_ref=$1
     local -n config_def=$2
 
     for name_element in "${!config_ref[@]}"; do
-        # Get only values from conf-file when empty  
+        # Get only values from conf-file when empty
         if [[ -z ${config_ref["$name_element"]} ]]; then
             config_ref["$name_element"]=$(xml_grep "$name_element" "${script_[config]}" --text_only 2>/dev/null)
         fi
@@ -58,7 +42,7 @@ extract_config_values() {
 
 # Function to replace all occurrencies
 replace_all_strings() {
-    local fullstring=$1         
+    local fullstring=$1
     local old_substrg=$2
     local new_substrg=$3
     if [[ $fullstring =~ [$old_substrg] ]]; then
@@ -73,15 +57,14 @@ replace_placeholders() {
     for ((k = 0; k < ${#id[@]}; k++)); do
         for ((j = ${#attribution[@]} - 1; j >= 0; j--)); do
             ref[k]=$(replace_all_strings "${ref[k]}" "\$${attribution[j]}" "${config_elements[${attribution[j]}]}")
-            if [[ -z ${ref[k]} ]]; then
-				unset ref[k]
-			fi			
+            if [[ ${ref[k]} =~ "\\." ]]; then
+                unset ref[k] 
+            fi
         done
     done
 }
 
 # Functions to start
-
 # Extract IDs
 read_identifier(){
     local -n option_ref=$1
@@ -98,64 +81,46 @@ read_identifier(){
 }
 
 # Extract options like names, paths etc.
-read_options() {
-    local -n option_ref=$1
-
-    if [[ -n ${option_ref[0]} ]]; then
-        option_ref=($(xml_grep "${option_ref[0]}" "${script_[config]}" --text_only))
-        replace_placeholders option_ref
-    fi
-}
-
-# Extract elements <>''
-count_options() {
-    local -n option_ref=$1
-    count=$2
-
-    if [[ -n ${option_ref[0]} ]]; then
-        count=$(( $count + ${#option_ref[@]} ))
-    fi
-    echo $count
-}
-
-# Extract id, names, paths etc.
 read_alloptions() {
+    local cfg_name=$1
     local -i num_options=0
-    rate=0
 
+    # Subfunction for single optis
+    read_options() {
+        local -n option_ref=$1
+        if [ -z "${option_ref[0]}" ]; then
+            unset option_ref[0]
+        else
+            option_ref=($(xml_grep "${option_ref[0]}" "${script_[config]}" --text_only))
+            replace_placeholders option_ref
+        fi
+        num_options=$(( $num_options + ${#option_ref[@]} ))
+    }
+
+    # start read all options
     read_identifier id
-    rate=$(( $(count_options id 0) ))
-    if [ $rate -eq 0 ]; then
-        message_exit "Missing data: Config-file '$1' has no item." 44
+    num_ids=${#id[@]}
+    if [[ $num_ids -eq 0 ]]; then
+        message_test_exit 1 "Missing data: Config-file '$cfg_name' has no item." 44
     fi
 
     read_options opti1
-    num_options=$(( $(count_options opti1 $num_options) ))
     read_options opti2
-    num_options=$(( $(count_options opti2 $num_options) ))
     read_options opti3
-    num_options=$(( $(count_options opti3 $num_options) ))
     read_options opti4
-    num_options=$(( $(count_options opti4 $num_options) ))
     read_options opti5
-    num_options=$(( $(count_options opti5 $num_options) ))
     read_options opti6
-    num_options=$(( $(count_options opti6 $num_options) ))
     read_options opti7
-    num_options=$(( $(count_options opti7 $num_options) ))
 
-    # Check correct count of options
-    rate=$(( $num_options % $num_elements ))
-    if [ $rate -ne 0 ]; then
-        message_exit "Missing data: Config-file '$1' with '$num_options MOD $num_elements' item(s) is not well-filled." 45 #???
-    fi
+    message_test_exit "$(( $num_options % $num_elements ))" \
+                      "Missing data: Config-file '$cfg_name' with '$num_options MOD $num_elements' item(s) is not well-filled." 45
 }
 
 # Reading configuration completed
 done_configuration() {
 [[ $is_test_mode -gt 0 ]] && echo "(t)Konfiguration eingelesen! >$cmdNr<\n"
 [[ $is_test_mode -gt 0 ]] && echo "(t)Starte....${script_[name]} (Testversion) ......\n"
-[[ $is_test_mode -gt 0 ]] && display_options 4
+[[ $is_test_mode -gt 0 ]] && display_options 3
 [[ $is_test_mode -gt 0 ]] && message_notification "(t)Configuration \n'$1'\nloaded!.      >$cmdNr<\n" 1 &
 }
 
@@ -175,7 +140,8 @@ read_configuration() {
         xfile="${script_[config]}"
     fi
 
-    [[ $is_test_mode -gt 0 ]] && message_notification "Reading configuration file \n\n${script_[config]}." 1 && echo "(t) start"
+    [[ $is_test_mode -gt 0 ]] && echo "(t) start"
+    message_notification "Reading configuration file \n\n${script_[config]}." 1
 
     # Call function to extract values
     extract_config_values config_elements config_std
@@ -204,11 +170,65 @@ return
 echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 is_test_mode=1
 
- for ((jj = ${#attribution[@]}; jj >= 0; jj--)); do
-            echo $jj
-        done
-
-
 read_configuration "/home/stefan/perl/Bakki-the-stickv1.2beta/config_2408.xml"
 
 exit 0
+
+
+## junk
+read_options2() {
+    local -n option_ref=$1
+
+    local num=$2
+
+    if [ -z "${option_ref[0]}" ]; then
+        unset option_ref[0]
+    else
+        option_ref=($(xml_grep "${option_ref[0]}" "${script_[config]}" --text_only))
+        replace_placeholders option_ref
+    fi
+
+    #return new number of items
+    echo $(( $num + ${#option_ref[@]} ))
+    #num=$(( $num + ${#option_ref[@]} ))
+}
+
+echo .
+echo $num_options
+    #read_options opti2 $num_options && echo $?
+    #num_options=$(read_options opti3 $num_options)
+    #num_options=$(read_options opti4 $num_options)
+    #num_options=$(read_options opti5 $num_options)
+    #num_options=$(read_options opti6 $num_options)
+    #num_options=$(read_options opti7 $num_options)
+
+    #num_options=$(( $(count_options opti1 $num_options) ))
+    #num_options=$(( $num_options + ${#opti1[@]} ))
+    #read_options opti2
+    #num_options=$(( $(count_options opti2 $num_options) ))
+    #read_options opti3
+    #num_options=$(( $(count_options opti3 $num_options) ))
+    #read_options opti4
+    #num_options=$(( $(count_options opti4 $num_options) ))
+    #read_options opti5
+    #num_options=$(( $(count_options opti5 $num_options) ))
+    #read_options opti6
+    #num_options=$(( $(count_options opti6 $num_options) ))
+    #read_options opti7
+    #num_options=$(( $(count_options opti7 $num_options) ))
+
+# Validate and modify a path based on certain conditions
+check_scriptpath_is_set2() {
+    local local_cust_path=$1          # The custom path to use if provided
+    local -n local_script=${2:-nil}   # The array where scriptpath is stored
+    local local_dir=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
+
+    # Modify local_cust_path if its directory is the current directory
+    if [[ "$(dirname "$local_cust_path")" == "." ]]; then
+        local_cust_path="$local_dir$local_cust_path"
+    fi
+
+    check_path "$local_cust_path"
+    #return:
+    local_script[config]="$local_cust_path"
+}
