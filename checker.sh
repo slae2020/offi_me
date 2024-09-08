@@ -22,7 +22,6 @@ check_path() {
         message_exit "Config-Error: Path \n'$path'\n is missing or not readable." 21
         exit
     fi
-    #echo "felix"
 }
 
 # Function to check if a USB stick is present

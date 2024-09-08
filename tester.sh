@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -i is_test_mode=1  # 1 for test mode, 0 for normal operation
+declare -i is_test_mode=0  # 1 for test mode, 0 for normal operation
 
 # Display options for selection
 display_options () {
@@ -53,6 +53,6 @@ display_options () {
 
 # Routine zum exit mit
 teststop() {
-    echo "teststop "$1
+    echo "(t) teststop "$1
     message_exit "Teststopp hier. $1" 0
 }

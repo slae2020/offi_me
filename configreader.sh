@@ -58,7 +58,7 @@ replace_placeholders() {
         for ((j = ${#attribution[@]} - 1; j >= 0; j--)); do
             ref[k]=$(replace_all_strings "${ref[k]}" "\$${attribution[j]}" "${config_elements[${attribution[j]}]}")
             if [[ ${ref[k]} =~ "\\." ]]; then
-                unset ref[k] 
+                unset ref[k]
             fi
         done
     done
@@ -118,38 +118,26 @@ read_alloptions() {
 
 # Reading configuration completed
 done_configuration() {
-[[ $is_test_mode -gt 0 ]] && echo "(t)Konfiguration eingelesen! >$cmdNr<\n"
-[[ $is_test_mode -gt 0 ]] && echo "(t)Starte....${script_[name]} (Testversion) ......\n"
+[[ $is_test_mode -gt 0 ]] && echo "(t) File "$1" cmdNr-->$cmdNr<\n"
 [[ $is_test_mode -gt 0 ]] && display_options 3
-[[ $is_test_mode -gt 0 ]] && message_notification "(t)Configuration \n'$1'\nloaded!.      >$cmdNr<\n" 1 &
+
+    message_notification "Reading configuration file done!" 1
 }
 
 # Reading configuration file
 read_configuration() {
-    # Exit if local_std_path is empty
-    if [[ -z "$config_stdname" ]]; then
-        echo "Error: Standard path is not set." >&2
-        exit 1
-    else
-        check_scriptpath_is_set ${1:-$config_stdname} script_
-    fi
+    check_scriptpath_is_set ${1:-$config_stdname} script_
 
-    if [[ -z "$(cd -- "$(dirname -- "$(readlink -f "${script_[config]}")")" &> /dev/null && pwd)" ]]; then
-        xfile="${script_[dir]}${script_[config]}"
-    else
-        xfile="${script_[config]}"
-    fi
-
-    [[ $is_test_mode -gt 0 ]] && echo "(t) start"
+    # Start
     message_notification "Reading configuration file \n\n${script_[config]}." 1
 
-    # Call function to extract values
+    # Get general config values
     extract_config_values config_elements config_std
 
     ## Replace placeholders from config & Ensure the progs ares set
     for ((i = 0; i < ${#attribution[@]}; i++)); do
         if [[ ${attribution[i]} =~ "dialog_" ]]; then
-            config_elements[${attribution[i]}]=$(replace_all_strings "${config_elements[${attribution[i]}]}" "\$version1" "${config_elements[version1]}") #????
+            config_elements[${attribution[i]}]=$(replace_all_strings "${config_elements[${attribution[i]}]}" "\$version1" "${config_elements[version1]}")
             config_elements[${attribution[i]}]=$(replace_all_strings "${config_elements[${attribution[i]}]}" "\$version2" "${config_elements[version2]}")
         fi
         if [[ ${attribution[i]} =~ "_prog" ]]; then
@@ -157,12 +145,20 @@ read_configuration() {
         fi
     done
 
+    # Get special config values
     read_alloptions ${script_[config]}
 
+    # End
     done_configuration ${script_[config]}
-
-    [[ $is_test_mode -gt 0 ]] && echo "(t)"${script_[config]}
 }
+
+[[ $is_test_mode -gt 0 ]] && echo "(t) start"
+
+# Necessary check
+if [[ -z "$config_stdname" ]]; then
+        message_exit "Error: Standard path is not set." 1
+        exit
+fi
 
 return
 
@@ -232,3 +228,11 @@ check_scriptpath_is_set2() {
     #return:
     local_script[config]="$local_cust_path"
 }
+
+    if [[ -z "$(cd -- "$(dirname -- "$(readlink -f "${script_[config]}")")" &> /dev/null && pwd)" ]]; then
+        xfile="${script_[dir]}${script_[config]}"
+    else
+        xfile="${script_[config]}"
+    fi
+
+[[ $is_test_mode -gt 0 ]] && echo "(t)"${script_[config]}

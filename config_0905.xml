@@ -5,7 +5,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 
 	<general>
 		<space> </space>
-		<version1 date="2024-09-05">1.21</version1>
+		<version1 date="2024-09-05">1.21beta</version1>
 		<version2>; Modul. mit sauberer decl.</version2>
 		<lang>de-DE</lang>
 

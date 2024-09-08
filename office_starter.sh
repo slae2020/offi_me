@@ -2,7 +2,7 @@
 
 source configreader.sh
 
-is_test_mode=01
+is_test_mode=0
 
 # Start of script execution; # Reading arguments from commandline # -c "$cfile" -e geany -n automatisch# -v verbose -h help
 while getopts ':c:e:n:vh' OPTION; do
