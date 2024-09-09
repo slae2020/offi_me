@@ -35,7 +35,7 @@ declare -a attribution=(
     [14]='\.'
 
     # directories
-    [15]='home_dir|~'
+    [15]='home_dir|'$HOME
     [16]='std_dir'
     [17]='usb_dir'
     [18]='remote_dir|'

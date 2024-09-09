@@ -55,6 +55,7 @@ replace_all_strings() {
 replace_placeholders() {
     local -n ref=$1
     for ((k = 0; k < ${#id[@]}; k++)); do
+		ref[k]=$(replace_all_strings "${ref[k]}" "~" "${config_elements[home_dir]}")
         for ((j = ${#attribution[@]} - 1; j >= 0; j--)); do
             ref[k]=$(replace_all_strings "${ref[k]}" "\$${attribution[j]}" "${config_elements[${attribution[j]}]}")
             if [[ ${ref[k]} =~ "\\." ]]; then
@@ -150,6 +151,8 @@ read_configuration() {
 
     # End
     done_configuration ${script_[config]}
+
+    [[ $is_test_mode -gt 0 ]] && echo "(t)"${script_[config]}
 }
 
 [[ $is_test_mode -gt 0 ]] && echo "(t) start"
@@ -169,7 +172,6 @@ is_test_mode=1
 read_configuration "/home/stefan/perl/Bakki-the-stickv1.2beta/config_2408.xml"
 
 exit 0
-
 
 ## junk
 read_options2() {

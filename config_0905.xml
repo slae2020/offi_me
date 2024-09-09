@@ -19,7 +19,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<name_stdprg>Office (pur)</name_stdprg>
 	</general>
 	<directories>
-		<home_dir>/home/stefan</home_dir>
+		<home_dir></home_dir>
 		<std_dir>/home/stefan/slae_kim/etc/vorlagen</std_dir>
 		<usb_dir>/media/stefan</usb_dir>
 		<remote_dir> </remote_dir>

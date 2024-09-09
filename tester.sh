@@ -28,7 +28,8 @@ display_options () {
         done
         ;;
         5)
-        
+        echo "Extracted IDs: ${id[@]}"
+        echo "Extracted Names: ${opti1[@]}"
         ;;
         6)
         echo .

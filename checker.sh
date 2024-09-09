@@ -81,6 +81,7 @@ check_scriptpath_is_set() {
 
 return
 
-#check_usb "/media/slaekim" "SLAE77"
 
-check_mount "/mnt/iserv_laettig/Files"
+check_usb "/media/stefan/SLAE01/slaekim" "SLAE01"
+
+#check_mount "/mnt/iserv_laettig/Files"
