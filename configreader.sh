@@ -55,13 +55,16 @@ replace_all_strings() {
 replace_placeholders() {
     local -n ref=$1
     for ((k = 0; k < ${#id[@]}; k++)); do
-		ref[k]=$(replace_all_strings "${ref[k]}" "~" "${config_elements[home_dir]}")
+        ref[k]=$(replace_all_strings "${ref[k]}" "~" "${config_elements[home_dir]}")
         for ((j = ${#attribution[@]} - 1; j >= 0; j--)); do
             ref[k]=$(replace_all_strings "${ref[k]}" "\$${attribution[j]}" "${config_elements[${attribution[j]}]}")
-            if [[ ${ref[k]} =~ "\\." ]]; then
+            if [[ -z ${ref[k]}  ]]; then
                 unset ref[k]
             fi
         done
+        if [[ -n ${ref[k]}  ]]; then
+            ref[k]=$(replace_all_strings "${ref[k]}" "\$empty" " ")
+        fi
     done
 }
 
@@ -113,14 +116,14 @@ read_alloptions() {
     read_options opti6
     read_options opti7
 
-    message_test_exit "$(( $num_options % $num_elements ))" \
-                      "Missing data: Config-file '$cfg_name' with '$num_options MOD $num_elements' item(s) is not well-filled." 45
+    message_test_exit "$(( ${#opti1[@]} * $num_elements - $num_options))" \
+                      "Missing data: Config-file '$cfg_name' is not well-filled." 45
 }
 
 # Reading configuration completed
 done_configuration() {
 [[ $is_test_mode -gt 0 ]] && echo "(t) File "$1" cmdNr-->$cmdNr<\n"
-[[ $is_test_mode -gt 0 ]] && display_options 3
+[[ $is_test_mode -gt 0 ]] && display_options 6
 
     message_notification "Reading configuration file done!" 1
 }
@@ -172,69 +175,3 @@ is_test_mode=1
 read_configuration "/home/stefan/perl/Bakki-the-stickv1.2beta/config_2408.xml"
 
 exit 0
-
-## junk
-read_options2() {
-    local -n option_ref=$1
-
-    local num=$2
-
-    if [ -z "${option_ref[0]}" ]; then
-        unset option_ref[0]
-    else
-        option_ref=($(xml_grep "${option_ref[0]}" "${script_[config]}" --text_only))
-        replace_placeholders option_ref
-    fi
-
-    #return new number of items
-    echo $(( $num + ${#option_ref[@]} ))
-    #num=$(( $num + ${#option_ref[@]} ))
-}
-
-echo .
-echo $num_options
-    #read_options opti2 $num_options && echo $?
-    #num_options=$(read_options opti3 $num_options)
-    #num_options=$(read_options opti4 $num_options)
-    #num_options=$(read_options opti5 $num_options)
-    #num_options=$(read_options opti6 $num_options)
-    #num_options=$(read_options opti7 $num_options)
-
-    #num_options=$(( $(count_options opti1 $num_options) ))
-    #num_options=$(( $num_options + ${#opti1[@]} ))
-    #read_options opti2
-    #num_options=$(( $(count_options opti2 $num_options) ))
-    #read_options opti3
-    #num_options=$(( $(count_options opti3 $num_options) ))
-    #read_options opti4
-    #num_options=$(( $(count_options opti4 $num_options) ))
-    #read_options opti5
-    #num_options=$(( $(count_options opti5 $num_options) ))
-    #read_options opti6
-    #num_options=$(( $(count_options opti6 $num_options) ))
-    #read_options opti7
-    #num_options=$(( $(count_options opti7 $num_options) ))
-
-# Validate and modify a path based on certain conditions
-check_scriptpath_is_set2() {
-    local local_cust_path=$1          # The custom path to use if provided
-    local -n local_script=${2:-nil}   # The array where scriptpath is stored
-    local local_dir=$(cd -- "$(dirname -- "$(readlink -f "$0")")" &> /dev/null && pwd)"/"
-
-    # Modify local_cust_path if its directory is the current directory
-    if [[ "$(dirname "$local_cust_path")" == "." ]]; then
-        local_cust_path="$local_dir$local_cust_path"
-    fi
-
-    check_path "$local_cust_path"
-    #return:
-    local_script[config]="$local_cust_path"
-}
-
-    if [[ -z "$(cd -- "$(dirname -- "$(readlink -f "${script_[config]}")")" &> /dev/null && pwd)" ]]; then
-        xfile="${script_[dir]}${script_[config]}"
-    else
-        xfile="${script_[config]}"
-    fi
-
-[[ $is_test_mode -gt 0 ]] && echo "(t)"${script_[config]}

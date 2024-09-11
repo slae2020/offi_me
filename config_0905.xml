@@ -29,13 +29,13 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 <!--
 		id immer integer
 		keine Lücken in name & id
-		immer $space minimum für nix/leer 
+		immer $empty minimum für nix/leer 
 -->
 		<eintrag>
 		<id>00</id>
 		<name>writer$space(leer)</name>
 		<prog>$std_prog$space--writer</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$usb_dir</template_path>
 		<template_file>$home_dir</template_file>
 		</eintrag>
@@ -45,7 +45,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>01</id>
 		<name>slae$spaceBrief</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir</template_path>
 		<template_file>/LaeHomeBrief.ott</template_file>
 		</eintrag>
@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>02</id>
 		<name>AB>>Physik$space(Stand.)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_physik_K202008.ott</template_file> 
 		</eintrag>
@@ -63,7 +63,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>03</id>
 		<name>AB>>Mathe$space(leer)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_matheL202010.ott</template_file> 
 		</eintrag>
@@ -72,7 +72,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>22</id>
 		<name>AB>>Physik$space(Stdquer?)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_physik_K202008.ott</template_file> 
 		</eintrag>
@@ -80,7 +80,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>23</id>
 		<name>AB>>Physik$space(Paetec)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_physik_paetec201904.ott</template_file> 
 		</eintrag>
@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>24</id>
 		<name>AB>>Physik$space(QUER$space2Sp)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_physik_2Q202002.ott</template_file> 
 		</eintrag>
@@ -96,7 +96,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>25</id>
 		<name>AB>>Physik$space(QUER$space3Sp)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_physik_3Q202103.ott</template_file> 
 		</eintrag>
@@ -105,7 +105,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>32</id>
 		<name>AB>>Mathe$space(Karos)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ab_mathe201903.ott</template_file> 
 		</eintrag>
@@ -113,7 +113,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>33</id>
 		<name>AB>>Mathe$space(Klettco)</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/ue_mathe201903.ott</template_file> 
 		</eintrag>
@@ -122,7 +122,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>61</id>
 		<name>LK$spacePhysik$spaceklass</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/lk_physik_OSpr_2311.ott</template_file> 
 		</eintrag>
@@ -130,7 +130,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>62</id>
 		<name>LK$spacePhysik$spacemit$spaceSprachBewertung</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/lk_physik_Spr_2311.ott</template_file> 
 		</eintrag>
@@ -138,7 +138,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>63</id>
 		<name>LK$spaceMathe</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/lk_ma_202303.ott</template_file> 
 		</eintrag>
@@ -146,7 +146,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>08</id>
 		<name>Abi$spacemdl</name>
 		<prog>$std_prog</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir/abf</template_path>
 		<template_file>/prf_abi_202206.ott</template_file> 
 		</eintrag>
@@ -154,18 +154,18 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>10</id>
 		<name>calc$space(leer)</name>
 		<prog>$std_prog$space--calc</prog>
-		<param>\.</param>
-		<template_path>\.</template_path>
-		<template_file>\.</template_file>
+		<param>$empty</param>
+		<template_path>$empty</template_path>
+		<template_file>$empty</template_file>
 		</eintrag>
 		
 		<eintrag>
 		<id>99</id>
 		<name>Alle$spaceVorlagen$spaceansehen</name>
 		<prog>caja</prog>
-		<param>\.</param>
+		<param>$empty</param>
 		<template_path>$std_dir</template_path>
-		<template_file>$space</template_file>
+		<template_file>$empty</template_file>
 		</eintrag>
 	</vorlagen>
 
