@@ -15,7 +15,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<dialog_column1>Optionen</dialog_column1>
 
 		<editor_prog></editor_prog>
-		<std_prog>soffice --nologo</std_prog>
+		<std_prog>soffice</std_prog>
 		<name_stdprg>Office (pur)</name_stdprg>
 	</general>
 	<directories>
@@ -45,7 +45,7 @@ xsi:noNamespaceSchemaLocation="/home/stefan/prog/bakki/Bakki-the-stick/config.xs
 		<id>01</id>
 		<name>slae$spaceBrief</name>
 		<prog>$std_prog</prog>
-		<param>$empty</param>
+		<param>--nologo</param>
 		<template_path>$std_dir</template_path>
 		<template_file>/LaeHomeBrief.ott</template_file>
 		</eintrag>

@@ -74,7 +74,7 @@ case $selection in
         if [[ ${opti5[$selectedIndex]} =~ ".ott" ]]; then
             check_path "${opti4[$selectedIndex]}${opti5[$selectedIndex]}"
         fi
-        command_to_execute="${opti2[$selectedIndex]} ${opti4[$selectedIndex]}${opti5[$selectedIndex]}"
+        command_to_execute="${opti2[$selectedIndex]} ${opti3[$selectedIndex]} ${opti4[$selectedIndex]}${opti5[$selectedIndex]}"
         eval $command_to_execute & >/dev/null 2>&1
         ;;
     *)
